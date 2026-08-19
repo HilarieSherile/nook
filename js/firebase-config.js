@@ -29,13 +29,14 @@
    ============================================================ */
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+    apiKey: "AIzaSyCgX6rgml4Ph7BVj1Qbh1szyuARZUBUpK8",
+    authDomain: "tracker-app-3a0b5.firebaseapp.com",
+    projectId: "tracker-app-3a0b5",
+    storageBucket: "tracker-app-3a0b5.firebasestorage.app",
+    messagingSenderId: "1003570725486",
+    appId: "1:1003570725486:web:6c5d494a0b0076139f5c7f",
+    measurementId: "G-Q807M6QMSY"
+  };
 
 // Don't touch below — used to detect whether you've filled in real keys yet.
 const FIREBASE_CONFIGURED = firebaseConfig.apiKey !== "YOUR_API_KEY";
