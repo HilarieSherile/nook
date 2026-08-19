@@ -99,4 +99,5 @@ document.getElementById("modalBackdrop").addEventListener("click", (e) => {
   if (e.target.id === "modalBackdrop") App.closeModal();
 });
 
+window.App = App; // expose globally so store.js can call App.showSignIn()
 window.addEventListener("DOMContentLoaded", () => App.init());
