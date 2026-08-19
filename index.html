@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#F4A9B8" />
+<title>Nook — Meals & Money</title>
+
+<!-- PWA / home screen support -->
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="assets/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Nook" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" id="mascot">🍑</span>
+    <span class="brand-name">Nook</span>
+  </div>
+  <div class="topbar-status" id="syncStatus">
+    <span class="dot"></span> <span id="syncText">Not synced</span>
+  </div>
+</header>
+
+<!-- ===== NAV ===== -->
+<nav class="tabbar" id="tabbar">
+  <button class="tab-btn active" data-tab="meals">
+    <span class="tab-icon">🗓️</span><span>Meals</span>
+  </button>
+  <button class="tab-btn" data-tab="recipes">
+    <span class="tab-icon">📖</span><span>Recipes</span>
+  </button>
+  <button class="tab-btn" data-tab="grocery">
+    <span class="tab-icon">🧺</span><span>Grocery</span>
+  </button>
+  <button class="tab-btn" data-tab="finance">
+    <span class="tab-icon">💌</span><span>Money</span>
+  </button>
+</nav>
+
+<main id="app">
+
+  <!-- ===== MEALS TAB ===== -->
+  <section class="view active" id="view-meals">
+    <div class="view-head">
+      <div>
+        <h1>This week's plate</h1>
+        <p class="sub" id="weekRange">—</p>
+      </div>
+      <div class="week-nav">
+        <button class="pill-btn" id="prevWeek">‹</button>
+        <button class="pill-btn" id="todayBtn">Today</button>
+        <button class="pill-btn" id="nextWeek">›</button>
+      </div>
+    </div>
+
+    <div class="week-grid" id="weekGrid"><!-- day cards injected --></div>
+  </section>
+
+  <!-- ===== RECIPES TAB ===== -->
+  <section class="view" id="view-recipes">
+    <div class="view-head">
+      <div>
+        <h1>Recipe box</h1>
+        <p class="sub">Search for something new, or keep your own.</p>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <input type="text" id="recipeSearch" placeholder="Search recipes… e.g. chicken stir fry" />
+      <button class="btn-primary" id="recipeSearchBtn">Search</button>
+    </div>
+    <p class="hint" id="apiHint"></p>
+
+    <div class="recipe-tabs">
+      <button class="chip active" data-recipe-tab="saved">My box</button>
+      <button class="chip" data-recipe-tab="results">Search results</button>
+    </div>
+
+    <div class="card-grid" id="savedRecipes"></div>
+    <div class="card-grid" id="searchResults" style="display:none;"></div>
+
+    <button class="btn-secondary" id="addManualRecipe">+ Add my own recipe</button>
+  </section>
+
+  <!-- ===== GROCERY TAB ===== -->
+  <section class="view" id="view-grocery">
+    <div class="view-head">
+      <div>
+        <h1>Grocery list</h1>
+        <p class="sub">Pulled from your planned meals, plus anything you add.</p>
+      </div>
+      <div class="total-badge" id="groceryTotal">$0.00</div>
+    </div>
+
+    <div class="search-row">
+      <input type="text" id="groceryAddInput" placeholder="Add an item…" />
+      <input type="number" id="groceryAddPrice" placeholder="$" step="0.01" style="max-width:90px;" />
+      <button class="btn-primary" id="groceryAddBtn">Add</button>
+    </div>
+
+    <ul class="grocery-list" id="groceryList"></ul>
+    <button class="btn-secondary" id="clearChecked">Clear checked items</button>
+  </section>
+
+  <!-- ===== FINANCE TAB ===== -->
+  <section class="view" id="view-finance">
+    <div class="view-head">
+      <div>
+        <h1>Money notes</h1>
+        <p class="sub" id="financeMonthLabel">—</p>
+      </div>
+      <div class="month-nav">
+        <button class="pill-btn" id="prevMonth">‹</button>
+        <button class="pill-btn" id="nextMonth">›</button>
+      </div>
+    </div>
+
+    <div class="sticky-row" id="budgetCards"></div>
+
+    <div class="section-sub">
+      <h2>Savings goal</h2>
+      <button class="link-btn" id="editGoalBtn">edit</button>
+    </div>
+    <div class="goal-card" id="goalCard"></div>
+
+    <div class="section-sub">
+      <h2>Expenses</h2>
+      <button class="link-btn" id="addExpenseBtn">+ add</button>
+    </div>
+    <ul class="expense-list" id="expenseList"></ul>
+  </section>
+
+</main>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/meals.js"></script>
+<script src="js/recipes.js"></script>
+<script src="js/grocery.js"></script>
+<script src="js/finance.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
